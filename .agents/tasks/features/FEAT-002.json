@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Author the Supabase Cloud SQL files (plain .sql, pasted by the user into the SQL editor): schema for tickets + admin_emails, the public_tickets view with anon grants, RLS policies gating admins by JWT email, the reserve_ticket SECURITY DEFINER RPC, and the 999-row + admin seed. Object names MUST exactly match what the frontend calls (public_tickets, reserve_ticket, admin_emails, tickets) and the status/sold_by literals from src/types.ts (FEAT-001). Independent of the UI; depends on FEAT-001 only for the agreed name/literal contract.",
+  "status": "pending",
+  "steps": [
+    "Create supabase/01_schema.sql: CREATE TABLE IF NOT EXISTS public.tickets ( number int PRIMARY KEY CHECK (number BETWEEN 1 AND 999), status text NOT NULL DEFAULT 'available' CHECK (status IN ('available','reserved','paid')), buyer_name text, buyer_phone text, buyer_email text, sold_by text CHECK (sold_by IN ('Felipe','Pipe')), reserved_at timestamptz, paid_at timestamptz, is_winner boolean NOT NULL DEFAULT false, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now() ). CREATE TABLE IF NOT EXISTS public.admin_emails ( email text PRIMARY KEY ). Add an updated_at trigger function + trigger (CREATE OR REPLACE FUNCTION set_updated_at ... ; trigger before update on tickets).",
+    "Create supabase/02_views.sql: CREATE OR REPLACE VIEW public.public_tickets AS SELECT number, status, is_winner FROM public.tickets; REVOKE ALL ON public.tickets FROM anon; GRANT SELECT ON public.public_tickets TO anon, authenticated. Ensure the view does NOT expose buyer_* columns. Note: set security_invoker=on OR document that the view is owner-run and only safe columns are projected.",
+    "Create supabase/03_rls.sql: ALTER TABLE public.tickets ENABLE ROW LEVEL SECURITY; ALTER TABLE public.admin_emails ENABLE ROW LEVEL SECURITY. Create a helper: a policy predicate that checks lower((select auth.jwt() ->> 'email')) IN (SELECT lower(email) FROM public.admin_emails) — wrap the auth call in a subselect per Supabase best practice AND lowercase both sides for case-insensitive matching (Gmail local part is case-insensitive). Policies on tickets: 'admin_select' FOR SELECT TO authenticated USING (<predicate>); 'admin_update' FOR UPDATE TO authenticated USING (<predicate>) WITH CHECK (<predicate>). No anon policies on tickets (anon reads via the view only). admin_emails: a SELECT policy allowing authenticated admins to read the allow-list (needed by the predicate / optional). CREATE INDEX IF NOT EXISTS on admin_emails(email). Keep idempotent via DROP POLICY IF EXISTS before CREATE POLICY.",
+    "Create supabase/04_functions.sql: CREATE OR REPLACE FUNCTION public.reserve_ticket(p_number int, p_name text, p_phone text, p_email text) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$ ... $$ : validate p_number 1..999; UPDATE public.tickets SET status='reserved', buyer_name=p_name, buyer_phone=p_phone, buyer_email=p_email, reserved_at=now(), updated_at=now() WHERE number=p_number AND status='available'; if NOT FOUND (row count 0) RETURN false (rejects when not available -> prevents double-booking/race); else RETURN true. REVOKE EXECUTE ON FUNCTION reserve_ticket FROM public; GRANT EXECUTE TO anon, authenticated.",
+    "Create supabase/05_seed.sql: INSERT INTO public.tickets (number) SELECT generate_series(1,999) ON CONFLICT (number) DO NOTHING (all default to 'available'). INSERT INTO public.admin_emails (email) VALUES ('leandroovalle02@gmail.com'), ('jacoboovallegiraldo@gmail.com'), ('juan.feliperodriguezgarcia1508@gmail.com') ON CONFLICT (email) DO NOTHING — all three real admin emails lowercased, no pending placeholder.",
+    "Add a short header comment at the top of each .sql file stating run order (01 -> 05) and that these are pasted into the Supabase SQL editor."
+  ],
+  "acceptance_criteria": [
+    "supabase/ contains 01_schema.sql, 02_views.sql, 03_rls.sql, 04_functions.sql, 05_seed.sql.",
+    "Object names present and spelled exactly: table public.tickets, view public.public_tickets, function public.reserve_ticket(int,text,text,text), table public.admin_emails.",
+    "public_tickets projects ONLY number, status, is_winner (no buyer_* columns); anon has no direct SELECT on tickets.",
+    "reserve_ticket is SECURITY DEFINER, flips only an 'available' ticket to 'reserved', and returns false if the ticket is not available.",
+    "RLS enabled on tickets; admin policies check lower((select auth.jwt() ->> 'email')) against lower(email) in admin_emails (case-insensitive); admin_emails seeded with all three real emails and no placeholder.",
+    "status CHECK is ('available','reserved','paid') and sold_by CHECK is ('Felipe','Pipe') — matching src/types.ts."
+  ],
+  "verification": [
+    "grep -R \"public_tickets\\|reserve_ticket\\|admin_emails\" supabase/ confirms all three names exist.",
+    "Read supabase/02_views.sql and confirm no buyer_ columns are selected in the view.",
+    "Read supabase/04_functions.sql and confirm the WHERE clause requires status='available' and returns false otherwise.",
+    "Confirm status/sold_by literals in SQL match src/types.ts Status and SoldBy."
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "Rifa",
+    "loading": "Cargando..."
+  },
+  "banner": {
+    "prizeLabel": "Premio",
+    "drawLabel": "Juega el",
+    "lotteryLabel": "con las tres ultimas cifras de la",
+    "priceLabel": "Valor por numero"
+  },
+  "raffle": {
+    "intro": "Elige tu numero de la suerte y participa.",
+    "numbersRange": "Numeros del {{min}} al {{max}}"
+  },
+  "public": {
+    "title": "Numeros disponibles",
+    "legend": {
+      "available": "Disponible",
+      "reserved": "Reservado",
+      "paid": "Pagado",
+      "winner": "Ganador"
+    },
+    "buy": "Quiero comprar",
+    "noResults": "No se encontraron numeros."
+  },
+  "search": {
+    "placeholder": "Buscar un numero (ej. 027)",
+    "label": "Buscar numero"
+  },
+  "counters": {
+    "sold": "Vendidos",
+    "paid": "Pagados",
+    "raised": "Recaudado",
+    "projected": "Proyectado"
+  },
+  "reserve": {
+    "title": "Reservar numero {{number}}",
+    "nameLabel": "Nombre del apostador",
+    "namePlaceholder": "Tu nombre completo",
+    "phoneLabel": "Numero telefonico",
+    "phonePlaceholder": "Ej. 3001234567",
+    "emailLabel": "Correo electronico (opcional)",
+    "emailPlaceholder": "tucorreo@ejemplo.com",
+    "submit": "Enviar solicitud",
+    "cancel": "Cancelar",
+    "success": "Solicitud enviada. Pronto te contactaran para confirmar el pago.",
+    "error": "No se pudo enviar la solicitud. Intenta de nuevo.",
+    "validation": {
+      "nameRequired": "El nombre es obligatorio.",
+      "phoneRequired": "El numero telefonico es obligatorio.",
+      "phoneInvalid": "Ingresa un numero telefonico valido.",
+      "emailInvalid": "Ingresa un correo electronico valido.",
+      "contactRequired": "Ingresa al menos un telefono o un correo."
+    }
+  },
+  "whatsapp": {
+    "messageTemplate": "Hola, quiero comprar el numero {{number}} de la rifa. Mi nombre es {{name}} y mi telefono es {{phone}}."
+  },
+  "admin": {
+    "loginButton": "Iniciar sesion con Google",
+    "accessDenied": "Acceso denegado. Esta cuenta no esta autorizada como administrador.",
+    "signOut": "Cerrar sesion",
+    "title": "Panel de administracion",
+    "table": {
+      "number": "Numero",
+      "status": "Estado",
+      "buyer": "Apostador",
+      "phone": "Telefono",
+      "email": "Correo",
+      "soldBy": "Vendido por",
+      "reservedAt": "Reservado",
+      "paidAt": "Pagado",
+      "actions": "Acciones"
+    },
+    "filters": {
+      "status": "Estado",
+      "seller": "Vendedor",
+      "all": "Todos"
+    },
+    "perSellerTotal": "Total por vendedor",
+    "markPaid": "Marcar pagado",
+    "release": "Liberar",
+    "csvExport": "Exportar CSV"
+  },
+  "status": {
+    "available": "Disponible",
+    "reserved": "Reservado",
+    "paid": "Pagado"
+  },
+  "winner": {
+    "label": "Numero ganador",
+    "placeholder": "Ingresa las 3 cifras (ej. 027)",
+    "set": "Marcar ganador",
+    "clear": "Quitar ganador",
+    "result": "El numero ganador es {{number}}",
+    "none": "Aun no hay numero ganador."
+  },
+  "footer": {
+    "madeBy": "Rifa de Jaco y Pipe para su emprendimiento",
+    "version": "Version"
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "Raffle",
+    "loading": "Loading..."
+  },
+  "banner": {
+    "prizeLabel": "Prize",
+    "drawLabel": "Draws on",
+    "lotteryLabel": "with the last three digits of the",
+    "priceLabel": "Price per number"
+  },
+  "raffle": {
+    "intro": "Pick your lucky number and join in.",
+    "numbersRange": "Numbers from {{min}} to {{max}}"
+  },
+  "public": {
+    "title": "Available numbers",
+    "legend": {
+      "available": "Available",
+      "reserved": "Reserved",
+      "paid": "Paid",
+      "winner": "Winner"
+    },
+    "buy": "I want to buy",
+    "noResults": "No numbers found."
+  },
+  "search": {
+    "placeholder": "Search a number (e.g. 027)",
+    "label": "Search number"
+  },
+  "counters": {
+    "sold": "Sold",
+    "paid": "Paid",
+    "raised": "Raised",
+    "projected": "Projected"
+  },
+  "reserve": {
+    "title": "Reserve number {{number}}",
+    "nameLabel": "Buyer name",
+    "namePlaceholder": "Your full name",
+    "phoneLabel": "Phone number",
+    "phonePlaceholder": "e.g. 3001234567",
+    "emailLabel": "Email (optional)",
+    "emailPlaceholder": "youremail@example.com",
+    "submit": "Send request",
+    "cancel": "Cancel",
+    "success": "Request sent. You'll be contacted soon to confirm payment.",
+    "error": "The request could not be sent. Please try again.",
+    "validation": {
+      "nameRequired": "Name is required.",
+      "phoneRequired": "Phone number is required.",
+      "phoneInvalid": "Enter a valid phone number.",
+      "emailInvalid": "Enter a valid email address.",
+      "contactRequired": "Enter at least a phone or an email."
+    }
+  },
+  "whatsapp": {
+    "messageTemplate": "Hi, I want to buy number {{number}} in the raffle. My name is {{name}} and my phone is {{phone}}."
+  },
+  "admin": {
+    "loginButton": "Sign in with Google",
+    "accessDenied": "Access denied. This account is not authorized as an administrator.",
+    "signOut": "Sign out",
+    "title": "Admin panel",
+    "table": {
+      "number": "Number",
+      "status": "Status",
+      "buyer": "Buyer",
+      "phone": "Phone",
+      "email": "Email",
+      "soldBy": "Sold by",
+      "reservedAt": "Reserved",
+      "paidAt": "Paid",
+      "actions": "Actions"
+    },
+    "filters": {
+      "status": "Status",
+      "seller": "Seller",
+      "all": "All"
+    },
+    "perSellerTotal": "Total per seller",
+    "markPaid": "Mark paid",
+    "release": "Release",
+    "csvExport": "Export CSV"
+  },
+  "status": {
+    "available": "Available",
+    "reserved": "Reserved",
+    "paid": "Paid"
+  },
+  "winner": {
+    "label": "Winning number",
+    "placeholder": "Enter the 3 digits (e.g. 027)",
+    "set": "Set winner",
+    "clear": "Clear winner",
+    "result": "The winning number is {{number}}",
+    "none": "No winning number yet."
+  },
+  "footer": {
+    "madeBy": "Jaco and Pipe's raffle for their startup",
+    "version": "Version"
+  }
+}

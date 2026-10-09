@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+
+# TypeScript project-reference build artifacts (emitted by `tsc -b`)
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+
+# local env (never commit secrets)
+.env
+.env.local
+
+# other package managers' lockfiles (pnpm-lock.yaml IS committed)
+package-lock.json
+yarn.lock
+
+# logs / os
+*.log
+.DS_Store

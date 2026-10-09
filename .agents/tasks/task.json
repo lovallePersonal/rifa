@@ -1,0 +1,7 @@
+{
+  "task_id": "task-rifa-fullstack",
+  "task_description": "Build a complete raffle (rifa) web app: React + Vite + TypeScript + Tailwind frontend with pnpm, Spanish-primary i18n, a centralized config, a public ticket-grid view (001..999) with reserve + WhatsApp intent, a Google-login admin view gated to an email allow-list, and plain Supabase Cloud SQL files (schema, public_tickets view, reserve_ticket SECURITY DEFINER RPC, admin_emails + RLS, 999-row seed). Verification bar: pnpm install + pnpm run build with zero TS errors, and SQL-object-name consistency with the frontend. No live Supabase project; runtime testing out of scope.",
+  "status": "pending",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003"],
+  "blocked_reason": null
+}

@@ -1,0 +1,42 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Build the full UI (public view + admin view) on top of the FEAT-001 foundation and the FEAT-002 SQL contract, then add project meta (.env.example, .gitignore, Spanish README) and initialize git on a DEV branch with the initial commit. Public view reads ONLY public_tickets and reserves via reserve_ticket RPC. Admin view uses Google login gated to ADMIN_EMAILS and operates on the base tickets table (admin RLS). Depends on FEAT-001 (config/i18n/supabase/types) and FEAT-002 (SQL names).",
+  "status": "pending",
+  "steps": [
+    "Create src/hooks/useAuth.ts: subscribe to supabase.auth.onAuthStateChange + getSession; expose { session, user, email, isAdmin, loading, signInWithGoogle, signOut }. isAdmin = isAdminEmail(email) using the case-insensitive helper from src/config.ts (lowercases both sides). signInWithGoogle calls supabase.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.origin + '/admin' } }). signOut calls supabase.auth.signOut().",
+    "Create shared components: src/components/StatusBadge.tsx (maps Status -> accessible color: available=green, reserved=amber, paid=gray/dark, with text label via i18n, sufficient contrast). src/components/Footer.tsx (shows import.meta.env.VITE_APP_VERSION ?? 'dev'). src/components/Banner.tsx (prize 'Nintendo Switch + AirPods 4', 'la boleta solo 10 mil pesos', 'Sortea el 29 de Octubre con los tres digitos de la Loteria de Bogota' — all via i18n keys and RAFFLE config).",
+    "Create src/pages/PublicView.tsx composing Banner + Counters + SearchBox + TicketGrid + Footer. On mount, SELECT number,status,is_winner from 'public_tickets' via supabase. Keep a local list; re-fetch after a successful reservation.",
+    "Create src/components/TicketGrid.tsx: render 999 cells for numbers 1..999 displayed as format3 (001..999), color-coded via StatusBadge/status. Clicking an 'available' cell opens ReserveModal for that number; non-available cells are non-interactive. Mobile-first responsive grid.",
+    "Create src/components/SearchBox.tsx: input to jump to / highlight a specific 3-digit number; validates range 1..999.",
+    "Create src/components/Counters.tsx: compute from public status counts — sold = reserved+paid, paid count, totalRaised = paidCount*RAFFLE.ticketPriceCOP, projected = soldCount*RAFFLE.ticketPriceCOP; format COP. Labels via i18n.",
+    "Create src/components/ReserveModal.tsx: form with name, phone, email (client validation; required name+phone, email optional-or-validated per i18n). On submit call supabase.rpc('reserve_ticket', { p_number, p_name, p_phone, p_email }); if returns true -> close, trigger grid refetch, and window.open the wa.me link: `https://wa.me/${WHATSAPP_ACTIVE_DESTINATION}?text=${encodeURIComponent(message)}` where message is the i18n whatsapp template filled with raffle name, 3-digit number, buyer name + phone. If false -> show 'ese numero ya no esta disponible' error (i18n).",
+    "Create src/pages/AdminView.tsx: if loading -> spinner; if no session -> login screen with 'Iniciar sesion con Google' button (signInWithGoogle); if session but !isAdmin -> access-denied message (i18n) + signOut button; if admin -> render AdminTable + WinnerInput + CSV export + counters + Footer. On admin mount, SELECT * from 'tickets'.",
+    "Create src/components/AdminTable.tsx: table of all numbers with buyer_name, buyer_phone, buyer_email, status, sold_by. Filters by status and by seller (Felipe|Pipe); show per-seller sales totals and overall counters (sold/paid/raised/projected). All headers/labels via i18n.",
+    "Create src/components/AdminActions.tsx (or inline row actions): Mark paid -> update tickets set status='paid', paid_at=now() where number=; Set sold_by -> update sold_by to 'Felipe' or 'Pipe'; Release -> update set status='available', buyer_name/phone/email=null, reserved_at=null, paid_at=null, sold_by=null where number= (document that this undoes a fallen-through reservation). Use supabase.from('tickets').update(...).eq('number', n). Re-fetch after each mutation.",
+    "Create src/components/WinnerInput.tsx: input for 3 winning digits (001..999); on submit update tickets set is_winner=true where number=; display the winning ticket's buyer (name/phone/email) from the admin data. Validate range.",
+    "Create src/lib/csv.ts: export a function that takes Ticket[] and triggers a client-side CSV download including all columns + buyer data (number as 001..999, status, buyer_name, buyer_phone, buyer_email, sold_by, is_winner, reserved_at, paid_at). Wire an 'Exportar CSV' button in AdminView.",
+    "Replace src/App.tsx with react-router routes: '/' -> PublicView, '/admin' -> AdminView, fallback redirect to '/'.",
+    "Create .env.example documenting VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_APP_VERSION (with example 'dev' value).",
+    "Create .gitignore: node_modules, dist, .env, .env.local, package-lock.json, yarn.lock. Do NOT ignore .env.example; do NOT ignore pnpm-lock.yaml.",
+    "Create README.md in Spanish (neutral): project overview; requisitos (Node 20, pnpm); correr local (pnpm install, pnpm dev, pnpm build); configurar Supabase cloud (crear proyecto, pegar supabase/01..05 en orden en el SQL editor, copiar URL + anon key a .env.local); configurar Google auth en Supabase (enable Google provider, callback URL, add origin); gestionar emails admin (los tres emails admin ya estan configurados: leandroovalle02, jacoboovallegiraldo, juan.feliperodriguezgarcia1508; para agregar/quitar admins editar ADMIN_EMAILS en src/config.ts Y la tabla admin_emails via INSERT; nota de comparacion case-insensitive); explicacion de privacidad de datos (view public_tickets solo columnas seguras, RPC reserve_ticket, RLS por email); nota de la fase de pruebas (los tres numeros reales estan en WHATSAPP_NUMBERS: Jaco 573125556018, Pipe 573115469638, prueba 573143933641; durante pruebas el destino activo es el numero de prueba 573143933641; como cambiarlo a Jaco o Pipe en una sola linea); deploy a Vercel (importar repo de GitHub, framework Vite, variables de entorno VITE_SUPABASE_URL/VITE_SUPABASE_ANON_KEY/VITE_APP_VERSION, agregar la URL de Vercel a los redirect URLs de Supabase/Google).",
+    "Initialize git: from the quoted workspace root run `git init`, `git checkout -b DEV`, stage the project files (NOT node_modules/.env), commit with message 'v0.1.0 Init: estructura inicial de la app de rifa'. Do NOT add a remote and do NOT push."
+  ],
+  "acceptance_criteria": [
+    "pnpm run build completes with zero TypeScript errors after all UI is added.",
+    "Public code paths query only 'public_tickets' and the 'reserve_ticket' RPC — never the base 'tickets' table.",
+    "Admin view: unauthenticated shows Google login; authenticated-non-admin shows access-denied + signout; admin shows full table with buyer data, filters, mark-paid, release, winner, CSV export.",
+    "ReserveModal opens a wa.me link using WHATSAPP_ACTIVE_DESTINATION (573143933641 during testing) with a Spanish prefilled message containing the 3-digit number and buyer info.",
+    ".env.example documents the three VITE_ vars; .gitignore ignores .env and package-lock.json/yarn.lock but keeps .env.example and pnpm-lock.yaml.",
+    "README.md (Spanish) covers local run, Supabase cloud setup, Google auth, admin email management, data-privacy model, testing-phase WhatsApp note, and Vercel deploy.",
+    "git repo initialized on branch DEV with exactly the commit 'v0.1.0 Init: estructura inicial de la app de rifa' and no remote/push."
+  ],
+  "verification": [
+    "From the quoted workspace root: pnpm run build  (expect success, zero TS errors).",
+    "grep -R \"public_tickets\\|reserve_ticket\" src/ and confirm these match supabase/ names; grep -R \"from('tickets')\\|from(\\\"tickets\\\")\" src/ and confirm matches appear only in admin code paths, not in PublicView/TicketGrid/Counters/ReserveModal.",
+    "grep -R \"573143933641\" src/config.ts and confirm WHATSAPP_ACTIVE_DESTINATION resolves to the test number.",
+    "git branch --show-current prints DEV; git log --oneline shows the init commit; git remote -v is empty."
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
