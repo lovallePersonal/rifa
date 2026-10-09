@@ -65,6 +65,31 @@ No hay Supabase local ni Docker: todo el backend vive en Supabase Cloud.
    **Redirect URLs** de tu entorno (por ejemplo `http://localhost:5173` en local y la URL de
    produccion cuando despliegues).
 
+## Hook de autenticacion (bloqueo de no-administradores)
+
+Ademas de las politicas RLS, el proyecto incluye una **barrera a nivel de autenticacion**
+(`supabase/06_auth_hook.sql`) que impide que una cuenta de Google no autorizada obtenga
+siquiera un token de acceso. Es una capa de defensa en profundidad: el usuario rechazado
+nunca llega a tener sesion, antes de que RLS tenga que intervenir.
+
+- **Tipo de hook:** *Custom Access Token* (se ejecuta antes de emitir cada token, tanto en
+  el login inicial como en cada refresh, por lo que bloquea tambien a cuentas no-admin ya
+  existentes).
+- **Funcion:** `public.restrict_token_to_admins(event jsonb)`. Si el correo del evento no
+  esta en `public.admin_emails` (comparacion insensible a mayusculas), devuelve un `error`
+  y Supabase Auth aborta la emision del token.
+
+**Pasos en el dashboard para habilitarlo** (accion manual, obligatoria):
+
+1. Ejecuta `supabase/06_auth_hook.sql` en el **SQL editor** (despues de `05_seed.sql`).
+2. Ve a **Authentication -> Hooks**.
+3. En **Custom Access Token** selecciona la funcion `public.restrict_token_to_admins`.
+4. Guarda y deja el hook **habilitado (Enable)**.
+
+**Capa adicional opcional (nivel UI):** en **Authentication -> Providers -> Google** (o en
+**Authentication -> Settings**) puedes restringir el registro con *allowed domains* o
+desactivar sign-ups abiertos, como refuerzo extra. No reemplaza al hook ni a RLS.
+
 ## Gestionar los correos administradores
 
 Los tres administradores ya estan configurados:

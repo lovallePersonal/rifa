@@ -17,13 +17,30 @@ export interface UseAuthResult {
   email: string | null
   isAdmin: boolean
   loading: boolean
+  /**
+   * True when the OAuth redirect came back with an error (e.g. the auth hook
+   * rejected a non-admin account, so no token was issued). Lets the UI show a
+   * graceful "acceso denegado" instead of an apparently-broken login button.
+   */
+  authError: boolean
   signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
+}
+
+/** Detects an OAuth error returned in the URL hash/query by Supabase Auth. */
+function detectAuthError(): boolean {
+  if (typeof window === 'undefined') return false
+  const hash = window.location.hash.startsWith('#')
+    ? window.location.hash.slice(1)
+    : window.location.hash
+  const params = new URLSearchParams(hash || window.location.search)
+  return params.has('error') || params.has('error_description')
 }
 
 export function useAuth(): UseAuthResult {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
+  const [authError, setAuthError] = useState<boolean>(detectAuthError)
 
   useEffect(() => {
     let mounted = true
@@ -37,6 +54,7 @@ export function useAuth(): UseAuthResult {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession)
       setLoading(false)
+      if (newSession) setAuthError(false)
     })
 
     return () => {
@@ -60,5 +78,5 @@ export function useAuth(): UseAuthResult {
     await supabase.auth.signOut()
   }
 
-  return { session, user, email, isAdmin, loading, signInWithGoogle, signOut }
+  return { session, user, email, isAdmin, loading, authError, signInWithGoogle, signOut }
 }

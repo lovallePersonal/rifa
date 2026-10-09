@@ -15,7 +15,7 @@ import Footer from '../components/Footer'
  */
 export function AdminView() {
   const { t } = useTranslation()
-  const { session, isAdmin, loading, signInWithGoogle, signOut } = useAuth()
+  const { session, isAdmin, loading, authError, signInWithGoogle, signOut } = useAuth()
   const [tickets, setTickets] = useState<Ticket[]>([])
 
   const fetchTickets = useCallback(async () => {
@@ -93,11 +93,16 @@ export function AdminView() {
   }
 
   if (!session) {
+    // No session. If the OAuth redirect returned an error, the auth hook most
+    // likely rejected a non-admin account (no token issued): show the same
+    // access-denied message so the user is never left on a broken-looking screen,
+    // plus the login button so an authorized account can still sign in.
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-gray-50 dark:bg-gray-900 px-4 text-center">
         <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
           {t('admin.title')}
         </h1>
+        {authError && <p className="text-red-600 dark:text-red-400">{t('admin.accessDenied')}</p>}
         <button
           type="button"
           onClick={() => void signInWithGoogle()}
