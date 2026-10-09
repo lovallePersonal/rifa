@@ -36,8 +36,10 @@
       "buySelected": "Comprar seleccionados ({{count}})",
       "empty": "No has seleccionado numeros.",
       "conflictError": "Estos numeros ya no estan disponibles: {{numbers}}. Ajusta tu seleccion e intenta de nuevo.",
-      "title": "Reservar numeros seleccionados"
-    }
+      "title": "Reservar numeros seleccionados",
+      "confirmHint": "Confirma tu seleccion aqui abajo."
+    },
+    "gridRegionLabel": "Listado de numeros disponibles"
   },
   "search": {
     "placeholder": "Buscar un numero (ej. 027)",
@@ -61,6 +63,14 @@
     "cancel": "Cancelar",
     "success": "Solicitud enviada. Pronto te contactaran para confirmar el pago.",
     "error": "No se pudo enviar la solicitud. Intenta de nuevo.",
+    "whatsapp": {
+      "successTitle": "Reserva confirmada",
+      "reservedLine": "Reservaste los numeros: {{numbers}}",
+      "instructions": "Para coordinar el pago debes enviarnos el mensaje de WhatsApp. Toca el boton de abajo para abrir la conversacion.",
+      "openButton": "Abrir WhatsApp",
+      "autoOpenNote": "Si WhatsApp no se abrio solo, usa el boton de arriba.",
+      "done": "Listo"
+    },
     "validation": {
       "nameRequired": "El nombre es obligatorio.",
       "phoneRequired": "El numero telefonico es obligatorio.",
@@ -78,6 +88,9 @@
     "accessDenied": "Acceso denegado. Esta cuenta no esta autorizada como administrador.",
     "signOut": "Cerrar sesion",
     "title": "Panel de administracion",
+    "refresh": "Actualizar",
+    "refreshing": "Actualizando...",
+    "lastUpdated": "Ultima actualizacion: {{time}}",
     "table": {
       "number": "Numero",
       "status": "Estado",

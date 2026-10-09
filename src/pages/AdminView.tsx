@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import type { SoldBy, Ticket } from '../types'
@@ -19,20 +19,48 @@ export function AdminView() {
   const { session, isAdmin, loading, authError, signInWithGoogle, signOut } = useAuth()
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [editing, setEditing] = useState<Ticket | null>(null)
+  const [refreshing, setRefreshing] = useState(false)
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null)
+  const refreshingRef = useRef(false)
 
   const fetchTickets = useCallback(async () => {
+    // Guard against overlapping fetches (poll + focus + manual can collide).
+    if (refreshingRef.current) return
+    refreshingRef.current = true
+    setRefreshing(true)
     const { data, error } = await supabase
       .from('tickets')
       .select('*')
       .order('number', { ascending: true })
     if (!error && data) {
       setTickets(data as Ticket[])
+      setLastUpdatedAt(new Date())
     }
+    refreshingRef.current = false
+    setRefreshing(false)
   }, [])
 
+  // Initial load + automatic refresh: poll every 25s and refetch when the tab
+  // regains focus, so new reservations appear without a full page reload.
   useEffect(() => {
-    if (session && isAdmin) {
+    if (!(session && isAdmin)) return
+
+    void fetchTickets()
+
+    const interval = window.setInterval(() => {
       void fetchTickets()
+    }, 25000)
+
+    const onFocus = () => {
+      if (document.visibilityState === 'visible') void fetchTickets()
+    }
+    window.addEventListener('focus', onFocus)
+    document.addEventListener('visibilitychange', onFocus)
+
+    return () => {
+      window.clearInterval(interval)
+      window.removeEventListener('focus', onFocus)
+      document.removeEventListener('visibilitychange', onFocus)
     }
   }, [session, isAdmin, fetchTickets])
 
@@ -189,10 +217,25 @@ export function AdminView() {
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
       <main className="flex-1 w-full max-w-6xl mx-auto px-4 py-6 space-y-6">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            {t('admin.title')}
-          </h1>
+          <div className="flex flex-col gap-0.5">
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              {t('admin.title')}
+            </h1>
+            {lastUpdatedAt && (
+              <p className="text-xs text-gray-500 dark:text-gray-400" aria-live="polite">
+                {t('admin.lastUpdated', { time: lastUpdatedAt.toLocaleTimeString() })}
+              </p>
+            )}
+          </div>
           <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => void fetchTickets()}
+              disabled={refreshing}
+              className="rounded-lg bg-gray-200 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-60"
+            >
+              {refreshing ? t('admin.refreshing') : t('admin.refresh')}
+            </button>
             <button
               type="button"
               onClick={() => downloadTicketsCsv(tickets)}

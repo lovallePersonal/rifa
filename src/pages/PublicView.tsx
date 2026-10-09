@@ -75,7 +75,11 @@ export function PublicView() {
         className="glow-blob bottom-24 -right-24 h-80 w-80 bg-switchblue-600/15"
       />
 
-      <main className="relative z-10 flex-1 w-full max-w-5xl mx-auto px-4 py-6 space-y-6">
+      <main
+        className={`relative z-10 flex-1 w-full max-w-5xl mx-auto px-4 py-6 space-y-6 ${
+          selectedSet.size > 0 ? 'pb-32' : ''
+        }`}
+      >
         <Banner />
 
         <Counters statuses={statuses} />
@@ -106,7 +110,11 @@ export function PublicView() {
       </main>
 
       {selectedSet.size > 0 && (
-        <div className="sticky bottom-0 z-40 border-t border-white/10 bg-ink-900/90 backdrop-blur">
+        <div
+          role="region"
+          aria-label={t('public.multi.confirmHint')}
+          className="fixed inset-x-0 bottom-0 sm:sticky sm:bottom-0 z-40 border-t border-white/10 bg-ink-900/90 backdrop-blur pb-[env(safe-area-inset-bottom)]"
+        >
           <div className="w-full max-w-5xl mx-auto px-4 py-3 space-y-2">
             <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
               <p className="text-sm font-semibold text-white">

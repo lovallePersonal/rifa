@@ -28,6 +28,8 @@ export function ReserveModal({ numbers, onClose, onReserved, onSuccess }: Reserv
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [reserved, setReserved] = useState(false)
+  const [waUrl, setWaUrl] = useState('')
 
   const sorted = [...numbers].sort((a, b) => a - b)
   const formattedNumbers = sorted.map(format3).join(', ')
@@ -53,14 +55,13 @@ export function ReserveModal({ numbers, onClose, onReserved, onSuccess }: Reserv
     return true
   }
 
-  function openWhatsApp() {
+  function buildWaUrl(): string {
     const message = t('whatsapp.messageTemplateMulti', {
       numbers: formattedNumbers,
       name: name.trim(),
       phone: phone.trim(),
     })
-    const url = `https://wa.me/${WHATSAPP_ACTIVE_DESTINATION}?text=${encodeURIComponent(message)}`
-    window.open(url, '_blank', 'noopener,noreferrer')
+    return `https://wa.me/${WHATSAPP_ACTIVE_DESTINATION}?text=${encodeURIComponent(message)}`
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -91,10 +92,15 @@ export function ReserveModal({ numbers, onClose, onReserved, onSuccess }: Reserv
       return
     }
 
-    openWhatsApp()
+    const url = buildWaUrl()
+    setWaUrl(url)
+    setReserved(true)
     onReserved()
     onSuccess?.()
-    onClose()
+    // Best-effort auto-open; this is NOT the primary path (it may be popup-blocked
+    // because it runs after the awaited RPC). The real anchor below is the reliable
+    // user-gesture path. We never depend on this call succeeding.
+    window.open(url, '_blank', 'noopener,noreferrer')
   }
 
   return (
@@ -109,12 +115,42 @@ export function ReserveModal({ numbers, onClose, onReserved, onSuccess }: Reserv
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white dark:font-display">
-          {t('public.multi.title')}
+          {reserved ? t('reserve.whatsapp.successTitle') : t('public.multi.title')}
         </h2>
         <p className="mt-1 text-sm font-mono text-gray-600 dark:text-switchblue-200">
           {formattedNumbers}
         </p>
 
+        {reserved ? (
+          <div className="mt-4 space-y-4">
+            <p className="text-sm text-gray-700 dark:text-slate-300">
+              {t('reserve.whatsapp.reservedLine', { numbers: formattedNumbers })}
+            </p>
+            <p className="text-sm text-gray-700 dark:text-slate-300">
+              {t('reserve.whatsapp.instructions')}
+            </p>
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full rounded-xl bg-brand-600 dark:bg-gradient-to-r dark:from-nintendo-500 dark:to-switchblue-500 px-4 py-3 text-center text-base font-bold text-white shadow-lg shadow-nintendo-500/20 hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-switchblue-400 focus:ring-offset-2 dark:focus:ring-offset-ink-950"
+            >
+              {t('reserve.whatsapp.openButton')}
+            </a>
+            <p className="text-xs text-gray-500 dark:text-slate-400">
+              {t('reserve.whatsapp.autoOpenNote')}
+            </p>
+            <div className="flex justify-end pt-1">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-lg px-4 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/10"
+              >
+                {t('reserve.whatsapp.done')}
+              </button>
+            </div>
+          </div>
+        ) : (
         <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="r-name" className="block text-sm text-gray-700 dark:text-slate-300">
@@ -177,6 +213,7 @@ export function ReserveModal({ numbers, onClose, onReserved, onSuccess }: Reserv
             </button>
           </div>
         </form>
+        )}
       </div>
     </div>
   )

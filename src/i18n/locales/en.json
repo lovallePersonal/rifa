@@ -36,8 +36,10 @@
       "buySelected": "Buy selected ({{count}})",
       "empty": "You have not selected any numbers.",
       "conflictError": "These numbers are no longer available: {{numbers}}. Adjust your selection and try again.",
-      "title": "Reserve selected numbers"
-    }
+      "title": "Reserve selected numbers",
+      "confirmHint": "Confirm your selection below."
+    },
+    "gridRegionLabel": "Available numbers list"
   },
   "search": {
     "placeholder": "Search a number (e.g. 027)",
@@ -61,6 +63,14 @@
     "cancel": "Cancel",
     "success": "Request sent. You'll be contacted soon to confirm payment.",
     "error": "The request could not be sent. Please try again.",
+    "whatsapp": {
+      "successTitle": "Reservation confirmed",
+      "reservedLine": "You reserved the numbers: {{numbers}}",
+      "instructions": "To coordinate payment you must send us the WhatsApp message. Tap the button below to open the conversation.",
+      "openButton": "Open WhatsApp",
+      "autoOpenNote": "If WhatsApp did not open automatically, use the button above.",
+      "done": "Done"
+    },
     "validation": {
       "nameRequired": "Name is required.",
       "phoneRequired": "Phone number is required.",
@@ -78,6 +88,9 @@
     "accessDenied": "Access denied. This account is not authorized as an administrator.",
     "signOut": "Sign out",
     "title": "Admin panel",
+    "refresh": "Refresh",
+    "refreshing": "Refreshing...",
+    "lastUpdated": "Last updated: {{time}}",
     "table": {
       "number": "Number",
       "status": "Status",

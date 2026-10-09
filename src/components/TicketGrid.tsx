@@ -30,15 +30,20 @@ export function TicketGrid({ tickets, highlight, selected, onToggle }: TicketGri
 
   return (
     <div
-      className="grid gap-2"
-      style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(3.25rem, 1fr))' }}
+      role="region"
+      aria-label={t('public.gridRegionLabel')}
+      className="max-h-[52vh] sm:max-h-[60vh] overflow-y-auto scroll-smooth overscroll-contain pr-1 pb-28"
     >
-      {tickets.map((ticket) => {
-        const isAvailable = ticket.status === 'available'
-        const isHighlighted = highlight === ticket.number
-        const isSelected = selected.has(ticket.number)
-        return (
-          <button
+      <div
+        className="grid gap-2"
+        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(3.25rem, 1fr))' }}
+      >
+        {tickets.map((ticket) => {
+          const isAvailable = ticket.status === 'available'
+          const isHighlighted = highlight === ticket.number
+          const isSelected = selected.has(ticket.number)
+          return (
+            <button
             key={ticket.number}
             type="button"
             disabled={!isAvailable}
@@ -68,8 +73,9 @@ export function TicketGrid({ tickets, highlight, selected, onToggle }: TicketGri
               </span>
             )}
           </button>
-        )
-      })}
+          )
+        })}
+      </div>
     </div>
   )
 }
