@@ -15,7 +15,7 @@ interface TicketGridProps {
 /** Tailwind classes per status; available is interactive, others are not. */
 const CELL_STYLES: Record<PublicTicket['status'], string> = {
   available:
-    'bg-ink-800/70 text-switchblue-100 border border-switchblue-500/30 hover:border-switchblue-400 hover:bg-ink-700/80 hover:text-white cursor-pointer',
+    'bg-ink-800 text-white border border-switchblue-500/40 hover:border-switchblue-400 hover:bg-ink-700 hover:text-white cursor-pointer',
   reserved:
     'bg-gold-500/15 text-gold-200 border border-gold-500/30 cursor-not-allowed opacity-80',
   paid: 'bg-white/5 text-slate-500 border border-white/10 cursor-not-allowed opacity-70',
