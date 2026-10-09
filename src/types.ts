@@ -1,11 +1,11 @@
 // Shared TypeScript types for the raffle app.
 // These literals MUST match the Supabase SQL definitions (FEAT-002):
 //   status  -> 'available' | 'reserved' | 'paid'
-//   sold_by -> 'Felipe' | 'Pipe'
+//   sold_by -> 'Jaco' | 'Pipe'
 
 export type Status = 'available' | 'reserved' | 'paid'
 
-export type SoldBy = 'Felipe' | 'Pipe'
+export type SoldBy = 'Jaco' | 'Pipe'
 
 /** Full ticket row as stored in the base `tickets` table (admin-only access). */
 export interface Ticket {

@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import type { PublicTicket } from '../types'
-import { RAFFLE, format3 } from '../config'
+import { RAFFLE, format3, resolveSeller } from '../config'
 import Banner from '../components/Banner'
 import Counters from '../components/Counters'
 import SearchBox from '../components/SearchBox'
@@ -16,6 +17,10 @@ import Footer from '../components/Footer'
  */
 export function PublicView() {
   const { t } = useTranslation()
+  const [params] = useSearchParams()
+  // Resolve the active seller once per visit from the ?v= query param.
+  // Missing/unknown values safe-default to Jaco (see resolveSeller).
+  const seller = useMemo(() => resolveSeller(params.get('v')), [params])
   const [tickets, setTickets] = useState<PublicTicket[]>([])
   const [highlight, setHighlight] = useState<number | null>(null)
   const [selectedSet, setSelectedSet] = useState<Set<number>>(new Set())
@@ -149,6 +154,7 @@ export function PublicView() {
       {modalOpen && (
         <ReserveModal
           numbers={selectedNumbers}
+          seller={seller}
           onClose={() => setModalOpen(false)}
           onReserved={() => void fetchTickets()}
           onSuccess={clearSelection}

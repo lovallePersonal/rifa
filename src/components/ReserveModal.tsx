@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
-import { WHATSAPP_ACTIVE_DESTINATION, format3 } from '../config'
+import { format3 } from '../config'
+import type { ResolvedSeller } from '../config'
 
 interface ReserveModalProps {
   /** The numbers being reserved (1..999), all-or-nothing. */
   numbers: number[]
+  /** The seller resolved from the public ?v= link: WhatsApp target + sold_by label. */
+  seller: ResolvedSeller
   onClose: () => void
   /** Refetch the grid (called on both success and conflict to reflect availability). */
   onReserved: () => void
@@ -18,10 +21,11 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 /**
  * Shared reservation form for one or many numbers. On submit it calls the
  * SECURITY DEFINER RPC reserve_tickets (atomic, all-or-nothing); on success it
- * opens a single WhatsApp (wa.me) link to WHATSAPP_ACTIVE_DESTINATION listing
- * all reserved numbers so an admin is notified of the purchase intent.
+ * opens a single WhatsApp (wa.me) link to the resolved seller's number listing
+ * all reserved numbers so that seller is notified of the purchase intent. The
+ * same seller label is recorded in tickets.sold_by via the RPC.
  */
-export function ReserveModal({ numbers, onClose, onReserved, onSuccess }: ReserveModalProps) {
+export function ReserveModal({ numbers, seller, onClose, onReserved, onSuccess }: ReserveModalProps) {
   const { t } = useTranslation()
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
@@ -63,7 +67,7 @@ export function ReserveModal({ numbers, onClose, onReserved, onSuccess }: Reserv
       name: name.trim(),
       phone: phone.trim(),
     })
-    return `https://wa.me/${WHATSAPP_ACTIVE_DESTINATION}?text=${encodeURIComponent(message)}`
+    return `https://wa.me/${seller.whatsappNumber}?text=${encodeURIComponent(message)}`
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -76,6 +80,7 @@ export function ReserveModal({ numbers, onClose, onReserved, onSuccess }: Reserv
       p_name: name.trim(),
       p_phone: phone.trim(),
       p_email: email.trim() || null,
+      p_sold_by: seller.sellerLabel,
     })
     setSubmitting(false)
 

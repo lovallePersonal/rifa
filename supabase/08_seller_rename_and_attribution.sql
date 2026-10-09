@@ -1,25 +1,30 @@
 -- =============================================================================
--- Rifa (raffle app) — reserva multiple atomica (anon RPC)
--- RUN ORDER: 01_schema -> 02_views -> 03_rls -> 04_functions -> 05_seed -> 06_auth_hook -> 07_reserve_multi
--- HOW TO RUN: pegar en el SQL editor de Supabase y ejecutar (despues de 04_functions).
--- NO ejecutar automaticamente contra la base: la DB esta viva y se aplica a mano.
+-- Rifa — migracion: rename de vendedor (Felipe -> Jaco) + atribucion por venta
+-- RUN ORDER: aplicar DESPUES de 07_reserve_multi en instalaciones nuevas; en la
+-- base viva (DEV) pegar este archivo en el SQL editor de Supabase y ejecutarlo.
+-- Idempotente: se puede ejecutar mas de una vez sin romper.
+-- NO se ejecuta automaticamente: la DB esta viva y se aplica a mano.
+-- Este archivo ES la migracion para la base viva (live DB).
 -- =============================================================================
 
--- -----------------------------------------------------------------------------
--- reserve_tickets: reserva en bloque, todo-o-nada. SECURITY DEFINER para
--- escribir en public.tickets a pesar de RLS, pero acotada: en una sola
--- transaccion bloquea (FOR UPDATE) todas las filas objetivo, verifica que
--- TODAS esten 'available' y, o bien las pasa todas a 'reserved' guardando
--- los datos del comprador, o no cambia nada y devuelve los numeros en conflicto.
---
--- Retorno (una fila):
---   success  boolean      -> true si TODAS se reservaron; false si hubo conflicto
---   conflicts int[]       -> numeros que no estaban disponibles (vacio si success)
---
--- p_sold_by: vendedor que resuelve el link publico (?v=jaco|?v=pipe). Se valida
---            dentro de la funcion: solo 'Jaco' o 'Pipe'; cualquier otro valor o
---            NULL cae por defecto a 'Jaco'.
--- -----------------------------------------------------------------------------
+-- 1) Permitir 'Jaco','Pipe' en el CHECK de sold_by (reemplaza Felipe).
+--    El nombre del constraint lo asigna Postgres automaticamente al declararlo
+--    inline en 01_schema (tickets_sold_by_check). Lo recreamos de forma guiada.
+--    NOTA: antes de correr en la base viva, confirmar el nombre real del
+--    constraint (p. ej. con \d public.tickets) por si una edicion previa lo
+--    nombro distinto; ajustar el DROP CONSTRAINT IF EXISTS si fuera necesario.
+ALTER TABLE public.tickets DROP CONSTRAINT IF EXISTS tickets_sold_by_check;
+-- Migrar datos existentes ANTES de re-agregar el CHECK, para no violar la nueva regla.
+UPDATE public.tickets SET sold_by = 'Jaco' WHERE sold_by = 'Felipe';
+ALTER TABLE public.tickets
+  ADD CONSTRAINT tickets_sold_by_check CHECK (sold_by IN ('Jaco', 'Pipe'));
+
+-- 2) Eliminar el overload viejo de 4 args para evitar ambiguedad de firma.
+DROP FUNCTION IF EXISTS public.reserve_tickets(int[], text, text, text);
+
+-- 3) Crear/reemplazar reserve_tickets con el 5o argumento p_sold_by.
+--    (Cuerpo identico a 07_reserve_multi tras esta migracion: validacion de
+--     p_sold_by -> solo 'Jaco'|'Pipe', safe-default 'Jaco'; resto sin cambios.)
 CREATE OR REPLACE FUNCTION public.reserve_tickets(
   p_numbers int[],
   p_name    text,
@@ -49,23 +54,19 @@ BEGIN
     v_sold_by := 'Jaco';
   END IF;
 
-  -- Validacion de entrada: arreglo no nulo, no vacio, y todos en rango 1..999.
   IF p_numbers IS NULL OR array_length(p_numbers, 1) IS NULL THEN
     RETURN QUERY SELECT false, ARRAY[]::int[];
     RETURN;
   END IF;
 
-  -- Deduplicar y ordenar para un orden de bloqueo determinista (evita deadlocks).
   SELECT array_agg(DISTINCT n ORDER BY n) INTO v_unique
   FROM unnest(p_numbers) AS n;
 
-  -- Rechazar si algun numero esta fuera de rango (coincide con el CHECK 1..999).
   IF EXISTS (SELECT 1 FROM unnest(v_unique) AS n WHERE n < 1 OR n > 999) THEN
     RETURN QUERY SELECT false, ARRAY[]::int[];
     RETURN;
   END IF;
 
-  -- Bloquear TODAS las filas objetivo (FOR UPDATE) en orden determinista.
   SELECT count(*) INTO v_locked
   FROM (
     SELECT number FROM public.tickets
@@ -74,13 +75,11 @@ BEGIN
     FOR UPDATE
   ) AS locked;
 
-  -- Contar cuantas de las bloqueadas estan disponibles.
   SELECT count(*) INTO v_available
   FROM public.tickets
   WHERE number = ANY(v_unique)
     AND status = 'available';
 
-  -- Si no todas las solicitadas estan disponibles -> conflicto, no cambiar nada.
   IF v_available <> array_length(v_unique, 1) THEN
     SELECT array_agg(n ORDER BY n) INTO v_conflicts
     FROM unnest(v_unique) AS n
@@ -92,7 +91,6 @@ BEGIN
     RETURN;
   END IF;
 
-  -- Todas disponibles: reservarlas en bloque.
   UPDATE public.tickets
   SET status      = 'reserved',
       buyer_name  = p_name,
@@ -108,7 +106,6 @@ BEGIN
 END;
 $$;
 
--- Cerrar ejecucion por defecto y conceder solo a los roles de la app
--- (mismo patron exacto que reserve_ticket en 04_functions.sql).
+-- 4) Mismo patron REVOKE/GRANT que el resto de RPCs (anon + authenticated).
 REVOKE EXECUTE ON FUNCTION public.reserve_tickets(int[], text, text, text, text) FROM public;
 GRANT  EXECUTE ON FUNCTION public.reserve_tickets(int[], text, text, text, text) TO anon, authenticated;

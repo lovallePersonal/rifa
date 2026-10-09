@@ -1,6 +1,8 @@
 // Centralized app configuration for the raffle (Rifa) app.
 // All values are documented. Keep user-facing strings OUT of this file (those live in i18n).
 
+import type { SoldBy } from './types'
+
 /**
  * Allow-list of administrator emails.
  * IMPORTANT: all stored lowercased. The allow-list MUST be compared case-insensitively
@@ -31,10 +33,36 @@ export const WHATSAPP_NUMBERS = {
 } as const
 
 /**
- * TESTING PHASE: all purchase-intent notifications go to the test number 573143933641 only.
- * To go live later, change this ONE line to WHATSAPP_NUMBERS.jaco (or .pipe).
+ * Fallback / default WhatsApp destination.
+ * NOTE: the PUBLIC purchase flow no longer relies on this static value. Each
+ * public visit resolves its seller from the ?v= query param via resolveSeller()
+ * below, and the reserve flow opens WhatsApp to THAT seller's number. This
+ * constant is kept only as a jaco-era fallback; per-visit resolution supersedes
+ * it for the public flow.
  */
-export const WHATSAPP_ACTIVE_DESTINATION: string = WHATSAPP_NUMBERS.test
+export const WHATSAPP_ACTIVE_DESTINATION: string = WHATSAPP_NUMBERS.jaco
+
+/** The two public seller link keys (lowercase, used in the ?v= query param). */
+export type SellerKey = 'jaco' | 'pipe'
+
+/** Resolved seller identity for a public visit: the DB label + the WhatsApp number. */
+export interface ResolvedSeller {
+  sellerLabel: SoldBy // 'Jaco' | 'Pipe' — written to tickets.sold_by
+  whatsappNumber: string // from WHATSAPP_NUMBERS, international format, no '+'
+}
+
+/**
+ * Resolve a raw ?v= query value into a seller. Case-insensitive; trims.
+ * Any missing/unknown value SAFE-DEFAULTS to 'jaco' so a bad or absent link
+ * (e.g. a bare "/" with no param) still routes the sale to a real seller (Jaco).
+ * Declared AFTER WHATSAPP_NUMBERS because it references it.
+ */
+export function resolveSeller(key: string | null | undefined): ResolvedSeller {
+  const k = (key ?? '').trim().toLowerCase()
+  if (k === 'pipe') return { sellerLabel: 'Pipe', whatsappNumber: WHATSAPP_NUMBERS.pipe }
+  // default + explicit 'jaco'
+  return { sellerLabel: 'Jaco', whatsappNumber: WHATSAPP_NUMBERS.jaco }
+}
 
 /**
  * Raffle parameters.

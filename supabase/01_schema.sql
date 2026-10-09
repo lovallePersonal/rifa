@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS public.tickets (
   buyer_name   text,
   buyer_phone  text,
   buyer_email  text,
-  sold_by      text CHECK (sold_by IN ('Felipe', 'Pipe')),
+  sold_by      text CHECK (sold_by IN ('Jaco', 'Pipe')),
   reserved_at  timestamptz,
   paid_at      timestamptz,
   is_winner    boolean NOT NULL DEFAULT false,

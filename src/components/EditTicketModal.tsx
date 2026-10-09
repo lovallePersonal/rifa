@@ -4,7 +4,7 @@ import type { SoldBy, Status, Ticket } from '../types'
 import { format3 } from '../config'
 
 const STATUSES: Status[] = ['available', 'reserved', 'paid']
-const SELLERS: SoldBy[] = ['Felipe', 'Pipe']
+const SELLERS: SoldBy[] = ['Jaco', 'Pipe']
 
 interface EditTicketModalProps {
   ticket: Ticket

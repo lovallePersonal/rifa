@@ -4,7 +4,7 @@ import type { SoldBy, Status, Ticket } from '../types'
 import { RAFFLE, format3 } from '../config'
 import StatusBadge from './StatusBadge'
 
-const SELLERS: SoldBy[] = ['Felipe', 'Pipe']
+const SELLERS: SoldBy[] = ['Jaco', 'Pipe']
 const STATUSES: Status[] = ['available', 'reserved', 'paid']
 
 function formatCOP(amount: number): string {
