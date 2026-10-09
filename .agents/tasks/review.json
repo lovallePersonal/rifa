@@ -1,0 +1,41 @@
+{
+  "verdict": "APPROVED",
+  "findings": [
+    {
+      "severity": "info",
+      "detail": "Data-privacy boundary verified: the public code path (PublicView/TicketGrid/Counters/ReserveModal) reads ONLY the public_tickets view (number/status/is_winner) and writes ONLY via the reserve_ticket RPC. Every from('tickets') call appears solely in src/pages/AdminView.tsx (5 occurrences). No buyer PII leaks to anon.",
+      "file": "src/pages/PublicView.tsx, src/pages/AdminView.tsx"
+    },
+    {
+      "severity": "info",
+      "detail": "SQL object-name contract matches the frontend exactly: public.tickets, public.public_tickets (projects only number/status/is_winner), public.reserve_ticket(int,text,text,text) SECURITY DEFINER with WHERE status='available' guard (race-safe, returns false otherwise), public.admin_emails. status CHECK ('available','reserved','paid') and sold_by CHECK ('Felipe','Pipe') match src/types.ts. Seed inserts 999 rows + the three real admin emails lowercased.",
+      "file": "supabase/01_schema.sql, supabase/02_views.sql, supabase/04_functions.sql, supabase/05_seed.sql"
+    },
+    {
+      "severity": "info",
+      "detail": "RLS gates admins case-insensitively via lower((select auth.jwt() ->> 'email')) IN (SELECT lower(email) FROM admin_emails), auth call wrapped in a scalar subselect per Supabase best practice, policies idempotent. The additive 06_auth_hook.sql (Custom Access Token hook, SECURITY DEFINER, 403 for non-admins) is correctly scoped: granted to supabase_auth_admin only, revoked from anon/authenticated/public, and leaves 02/03 untouched.",
+      "file": "supabase/03_rls.sql, supabase/06_auth_hook.sql"
+    },
+    {
+      "severity": "info",
+      "detail": "config.ts centralizes the spec correctly: three real admin emails lowercased, isAdminEmail() case-insensitive, WHATSAPP_NUMBERS jaco=573125556018/pipe=573115469638/test=573143933641, and WHATSAPP_ACTIVE_DESTINATION === test (573143933641) with the documented one-line-switch comment. ReserveModal builds the wa.me link against WHATSAPP_ACTIVE_DESTINATION with a Spanish prefilled message carrying the 3-digit number, name and phone.",
+      "file": "src/config.ts, src/components/ReserveModal.tsx"
+    },
+    {
+      "severity": "info",
+      "detail": "i18n parity confirmed: es.json and en.json each expose exactly 69 keys with zero divergence; no hardcoded user-facing strings found in components/pages JSX. Tailwind has darkMode:'class', brand amber scale (DEFAULT #F59E0B, 600 #D97706) and Inter in fontFamily.sans.",
+      "file": "src/i18n/locales/es.json, src/i18n/locales/en.json, tailwind.config.js"
+    },
+    {
+      "severity": "info",
+      "detail": "Admin view is fully gated (loading spinner -> Google login -> access-denied+signOut for non-admin -> full table for admin) and exposes mark-paid, release (wipes buyer data + timestamps), set-seller (Felipe|Pipe), winner input and CSV export (all 9 required columns, RFC-4180 quoting + BOM). Meta files correct: .env.example documents the three VITE_ vars; .gitignore ignores .env/.env.local/package-lock.json/yarn.lock while keeping .env.example and pnpm-lock.yaml. Spanish README covers local run, Supabase setup, Google auth, admin-email management, data-privacy model, testing-phase WhatsApp note and Vercel deploy.",
+      "file": "src/pages/AdminView.tsx, src/lib/csv.ts, .env.example, .gitignore, README.md"
+    },
+    {
+      "severity": "info",
+      "detail": "Verification bar met: `pnpm run build` is green (tsc -b + vite build, 0 TS errors, 112 modules). git is on branch DEV with the init commit 'v0.1.0 Init: estructura inicial de la app de rifa' plus an additive 'v0.2.0 Feat: hook de auth...'; git remote -v is empty (no push). The only working-tree change is the task-tracking file .agents/tasks/features/FEAT-003.json, not app code.",
+      "file": "package.json"
+    }
+  ],
+  "summary": "APPROVED. Full spec met and `pnpm run build` is green. Public code reads only public_tickets + reserve_ticket RPC; buyer PII stays admin-only. SQL object names/literals, RLS case-insensitive email gating, SECURITY DEFINER reserve + auth hook, config (three admin emails, WhatsApp active=test 573143933641), i18n es/en parity (69/69, no hardcoded strings), Tailwind brand+Inter, admin actions (mark-paid/release/seller/winner/CSV), meta files, Spanish README, and git on DEV with the init commit all verified. No blocking findings."
+}
