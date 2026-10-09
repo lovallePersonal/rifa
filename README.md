@@ -52,8 +52,32 @@ No hay Supabase local ni Docker: todo el backend vive en Supabase Cloud.
    3. `03_rls.sql` — Row Level Security por correo administrador.
    4. `04_functions.sql` — RPC `reserve_ticket` (unico camino de escritura publico).
    5. `05_seed.sql` — carga los 999 numeros y los tres correos administradores.
+   6. `07_reserve_multi.sql` — RPC `reserve_tickets` (reserva multiple atomica). Ver la
+      seccion **Reserva multiple de numeros** mas abajo: este paso es **obligatorio** para
+      que la compra de varios numeros a la vez funcione.
 3. En **Project Settings -> API** copia la **Project URL** y la clave **anon public** a tu
    `.env.local` (`VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`).
+
+## ⚠️ Reserva multiple de numeros (accion manual OBLIGATORIA)
+
+La compra de **varios numeros a la vez** desde la vista publica usa el RPC
+`reserve_tickets`, definido en `supabase/07_reserve_multi.sql`. **Esta funcionalidad no
+funciona en produccion hasta que apliques ese archivo en Supabase.** Si no lo ejecutas, la
+seleccion multiple fallara al reservar.
+
+Pasos exactos:
+
+1. Abre tu proyecto en [supabase.com](https://supabase.com).
+2. Ve al **SQL editor**.
+3. Pega el contenido completo de `supabase/07_reserve_multi.sql`.
+4. Ejecuta (**Run**).
+
+Notas:
+
+- Debe ejecutarse **despues** de `04_functions.sql` (depende de la misma tabla `tickets` y
+  del mismo patron de permisos que `reserve_ticket`).
+- Es **aditivo e idempotente**: usa `CREATE OR REPLACE FUNCTION`, por lo que puedes
+  volver a ejecutarlo sin romper nada ni perder datos.
 
 ## Configurar login de Google en Supabase
 
