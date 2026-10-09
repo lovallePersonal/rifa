@@ -6,8 +6,10 @@ interface TicketGridProps {
   tickets: PublicTicket[]
   /** Highlighted number from the search box (or null). */
   highlight: number | null
-  /** Opens the reserve modal for an available number. */
-  onSelect: (n: number) => void
+  /** Numbers currently in the selection set. */
+  selected: Set<number>
+  /** Toggles an available number in/out of the selection set. */
+  onToggle: (n: number) => void
 }
 
 /** Tailwind classes per status; available is interactive, others are not. */
@@ -19,7 +21,7 @@ const CELL_STYLES: Record<PublicTicket['status'], string> = {
   paid: 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed opacity-70',
 }
 
-export function TicketGrid({ tickets, highlight, onSelect }: TicketGridProps) {
+export function TicketGrid({ tickets, highlight, selected, onToggle }: TicketGridProps) {
   const { t } = useTranslation()
 
   if (tickets.length === 0) {
@@ -34,16 +36,24 @@ export function TicketGrid({ tickets, highlight, onSelect }: TicketGridProps) {
       {tickets.map((ticket) => {
         const isAvailable = ticket.status === 'available'
         const isHighlighted = highlight === ticket.number
+        const isSelected = selected.has(ticket.number)
         return (
           <button
             key={ticket.number}
             type="button"
             disabled={!isAvailable}
-            onClick={() => isAvailable && onSelect(ticket.number)}
+            aria-pressed={isSelected}
+            onClick={() => isAvailable && onToggle(ticket.number)}
             aria-label={`${format3(ticket.number)} - ${t(`status.${ticket.status}`)}`}
             className={`relative rounded-md py-2 text-sm font-mono font-medium text-center transition-colors ${
               CELL_STYLES[ticket.status]
-            } ${isHighlighted ? 'ring-2 ring-brand-500 ring-offset-1 dark:ring-offset-gray-900' : ''}`}
+            } ${
+              isSelected ? 'ring-2 ring-brand-600 ring-offset-1 dark:ring-offset-gray-900' : ''
+            } ${
+              isHighlighted && !isSelected
+                ? 'ring-2 ring-brand-500 ring-offset-1 dark:ring-offset-gray-900'
+                : ''
+            }`}
           >
             {format3(ticket.number)}
             {ticket.is_winner && (

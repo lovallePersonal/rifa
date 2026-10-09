@@ -22,7 +22,17 @@
       "winner": "Ganador"
     },
     "buy": "Quiero comprar",
-    "noResults": "No se encontraron numeros."
+    "noResults": "No se encontraron numeros.",
+    "multi": {
+      "selectHint": "Toca los numeros disponibles para seleccionarlos.",
+      "selectedCount": "Seleccionados: {{count}}",
+      "selectedList": "Numeros: {{numbers}}",
+      "clear": "Limpiar seleccion",
+      "buySelected": "Comprar seleccionados ({{count}})",
+      "empty": "No has seleccionado numeros.",
+      "conflictError": "Estos numeros ya no estan disponibles: {{numbers}}. Ajusta tu seleccion e intenta de nuevo.",
+      "title": "Reservar numeros seleccionados"
+    }
   },
   "search": {
     "placeholder": "Buscar un numero (ej. 027)",
@@ -55,7 +65,8 @@
     }
   },
   "whatsapp": {
-    "messageTemplate": "Hola, quiero comprar el numero {{number}} de la rifa. Mi nombre es {{name}} y mi telefono es {{phone}}."
+    "messageTemplate": "Hola, quiero comprar el numero {{number}} de la rifa. Mi nombre es {{name}} y mi telefono es {{phone}}.",
+    "messageTemplateMulti": "Hola, quiero comprar los numeros {{numbers}} de la rifa. Mi nombre es {{name}} y mi telefono es {{phone}}."
   },
   "admin": {
     "loginButton": "Iniciar sesion con Google",
@@ -81,7 +92,25 @@
     "perSellerTotal": "Total por vendedor",
     "markPaid": "Marcar pagado",
     "release": "Liberar",
-    "csvExport": "Exportar CSV"
+    "csvExport": "Exportar CSV",
+    "editAction": "Editar",
+    "registerSale": "Registrar venta",
+    "edit": {
+      "title": "Editar numero {{number}}",
+      "registerTitle": "Registrar venta — numero {{number}}",
+      "statusLabel": "Estado",
+      "sellerLabel": "Vendido por",
+      "sellerNone": "Sin asignar",
+      "nameLabel": "Nombre del apostador",
+      "phoneLabel": "Numero telefonico",
+      "emailLabel": "Correo electronico",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "saveError": "No se pudieron guardar los cambios. Intenta de nuevo.",
+      "validation": {
+        "nameForStatus": "Para estado reservado o pagado se recomienda ingresar al menos el nombre del apostador."
+      }
+    }
   },
   "status": {
     "available": "Disponible",

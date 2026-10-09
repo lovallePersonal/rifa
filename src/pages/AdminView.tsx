@@ -5,6 +5,7 @@ import type { SoldBy, Ticket } from '../types'
 import { useAuth } from '../hooks/useAuth'
 import { downloadTicketsCsv } from '../lib/csv'
 import AdminTable from '../components/AdminTable'
+import EditTicketModal from '../components/EditTicketModal'
 import WinnerInput from '../components/WinnerInput'
 import Counters from '../components/Counters'
 import Footer from '../components/Footer'
@@ -17,6 +18,7 @@ export function AdminView() {
   const { t } = useTranslation()
   const { session, isAdmin, loading, authError, signInWithGoogle, signOut } = useAuth()
   const [tickets, setTickets] = useState<Ticket[]>([])
+  const [editing, setEditing] = useState<Ticket | null>(null)
 
   const fetchTickets = useCallback(async () => {
     const { data, error } = await supabase
@@ -77,6 +79,60 @@ export function AdminView() {
   const setWinner = useCallback(
     async (n: number) => {
       await supabase.from('tickets').update({ is_winner: true }).eq('number', n)
+      await fetchTickets()
+    },
+    [fetchTickets],
+  )
+
+  // Centralized write for Feature 1/2 (edit any row / register a sale from scratch).
+  // It applies the status-transition rules consistently with the quick-action
+  // handlers before writing the base tickets row.
+  const saveTicket = useCallback(
+    async (current: Ticket, patch: Partial<Ticket>) => {
+      const now = new Date().toISOString()
+      const next = { ...current, ...patch }
+      let finalPatch: Partial<Ticket>
+
+      if (next.status === 'available') {
+        // Same semantics as the release handler: return the number to the pool.
+        finalPatch = {
+          status: 'available',
+          buyer_name: null,
+          buyer_phone: null,
+          buyer_email: null,
+          sold_by: null,
+          reserved_at: null,
+          paid_at: null,
+        }
+      } else if (next.status === 'paid') {
+        // A direct sale logically passes through reserved; set timestamps only if missing.
+        finalPatch = {
+          status: 'paid',
+          buyer_name: next.buyer_name,
+          buyer_phone: next.buyer_phone,
+          buyer_email: next.buyer_email,
+          sold_by: next.sold_by,
+          reserved_at: current.reserved_at ?? now,
+          paid_at: current.paid_at ?? now,
+        }
+      } else {
+        // reserved
+        finalPatch = {
+          status: 'reserved',
+          buyer_name: next.buyer_name,
+          buyer_phone: next.buyer_phone,
+          buyer_email: next.buyer_email,
+          sold_by: next.sold_by,
+          reserved_at: current.reserved_at ?? now,
+          paid_at: null,
+        }
+      }
+
+      const { error } = await supabase
+        .from('tickets')
+        .update(finalPatch)
+        .eq('number', current.number)
+      if (error) throw error
       await fetchTickets()
     },
     [fetchTickets],
@@ -163,10 +219,19 @@ export function AdminView() {
           onMarkPaid={markPaid}
           onRelease={release}
           onSetSeller={setSeller}
+          onEdit={(n) => setEditing(tickets.find((ti) => ti.number === n) ?? null)}
         />
       </main>
 
       <Footer />
+
+      {editing && (
+        <EditTicketModal
+          ticket={editing}
+          onClose={() => setEditing(null)}
+          onSave={(patch) => saveTicket(editing, patch)}
+        />
+      )}
     </div>
   )
 }

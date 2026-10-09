@@ -22,7 +22,17 @@
       "winner": "Winner"
     },
     "buy": "I want to buy",
-    "noResults": "No numbers found."
+    "noResults": "No numbers found.",
+    "multi": {
+      "selectHint": "Tap available numbers to select them.",
+      "selectedCount": "Selected: {{count}}",
+      "selectedList": "Numbers: {{numbers}}",
+      "clear": "Clear selection",
+      "buySelected": "Buy selected ({{count}})",
+      "empty": "You have not selected any numbers.",
+      "conflictError": "These numbers are no longer available: {{numbers}}. Adjust your selection and try again.",
+      "title": "Reserve selected numbers"
+    }
   },
   "search": {
     "placeholder": "Search a number (e.g. 027)",
@@ -55,7 +65,8 @@
     }
   },
   "whatsapp": {
-    "messageTemplate": "Hi, I want to buy number {{number}} in the raffle. My name is {{name}} and my phone is {{phone}}."
+    "messageTemplate": "Hi, I want to buy number {{number}} in the raffle. My name is {{name}} and my phone is {{phone}}.",
+    "messageTemplateMulti": "Hi, I want to buy numbers {{numbers}} in the raffle. My name is {{name}} and my phone is {{phone}}."
   },
   "admin": {
     "loginButton": "Sign in with Google",
@@ -81,7 +92,25 @@
     "perSellerTotal": "Total per seller",
     "markPaid": "Mark paid",
     "release": "Release",
-    "csvExport": "Export CSV"
+    "csvExport": "Export CSV",
+    "editAction": "Edit",
+    "registerSale": "Register sale",
+    "edit": {
+      "title": "Edit number {{number}}",
+      "registerTitle": "Register sale — number {{number}}",
+      "statusLabel": "Status",
+      "sellerLabel": "Sold by",
+      "sellerNone": "Unassigned",
+      "nameLabel": "Buyer name",
+      "phoneLabel": "Phone number",
+      "emailLabel": "Email",
+      "save": "Save",
+      "cancel": "Cancel",
+      "saveError": "Could not save changes. Please try again.",
+      "validation": {
+        "nameForStatus": "For reserved or paid status it is recommended to enter at least the buyer name."
+      }
+    }
   },
   "status": {
     "available": "Available",

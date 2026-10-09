@@ -20,13 +20,21 @@ interface AdminTableProps {
   onMarkPaid: (n: number) => Promise<void>
   onRelease: (n: number) => Promise<void>
   onSetSeller: (n: number, seller: SoldBy) => Promise<void>
+  /** Opens the edit modal for a row (also the "register sale" entry on available rows). */
+  onEdit: (n: number) => void
 }
 
 /**
  * Full admin table over the base tickets rows: buyer data, status + seller
  * filters, per-seller sales totals, and inline row actions.
  */
-export function AdminTable({ tickets, onMarkPaid, onRelease, onSetSeller }: AdminTableProps) {
+export function AdminTable({
+  tickets,
+  onMarkPaid,
+  onRelease,
+  onSetSeller,
+  onEdit,
+}: AdminTableProps) {
   const { t } = useTranslation()
   const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all')
   const [sellerFilter, setSellerFilter] = useState<SoldBy | 'all'>('all')
@@ -144,7 +152,14 @@ export function AdminTable({ tickets, onMarkPaid, onRelease, onSetSeller }: Admi
                   </select>
                 </td>
                 <td className="px-3 py-2">
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onEdit(ti.number)}
+                      className="rounded bg-brand-600 px-2 py-1 text-xs font-medium text-white hover:bg-brand-700"
+                    >
+                      {ti.status === 'available' ? t('admin.registerSale') : t('admin.editAction')}
+                    </button>
                     {ti.status !== 'paid' && (
                       <button
                         type="button"
