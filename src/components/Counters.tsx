@@ -43,10 +43,10 @@ export function Counters({ statuses }: CountersProps) {
       {cards.map((c) => (
         <div
           key={c.label}
-          className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-center"
+          className="rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-ink-800/60 dark:backdrop-blur px-3 py-3 text-center"
         >
-          <div className="text-xs text-gray-500 dark:text-gray-400">{c.label}</div>
-          <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">{c.value}</div>
+          <div className="text-xs text-gray-500 dark:text-slate-400">{c.label}</div>
+          <div className="text-lg font-semibold text-gray-900 dark:text-white dark:font-display">{c.value}</div>
         </div>
       ))}
     </div>

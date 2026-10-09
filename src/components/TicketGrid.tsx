@@ -15,22 +15,22 @@ interface TicketGridProps {
 /** Tailwind classes per status; available is interactive, others are not. */
 const CELL_STYLES: Record<PublicTicket['status'], string> = {
   available:
-    'bg-green-100 text-green-900 hover:bg-green-200 dark:bg-green-900 dark:text-green-100 dark:hover:bg-green-800 cursor-pointer',
+    'bg-ink-800/70 text-switchblue-100 border border-switchblue-500/30 hover:border-switchblue-400 hover:bg-ink-700/80 hover:text-white cursor-pointer',
   reserved:
-    'bg-amber-100 text-amber-900 dark:bg-amber-900 dark:text-amber-100 cursor-not-allowed opacity-80',
-  paid: 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed opacity-70',
+    'bg-gold-500/15 text-gold-200 border border-gold-500/30 cursor-not-allowed opacity-80',
+  paid: 'bg-white/5 text-slate-500 border border-white/10 cursor-not-allowed opacity-70',
 }
 
 export function TicketGrid({ tickets, highlight, selected, onToggle }: TicketGridProps) {
   const { t } = useTranslation()
 
   if (tickets.length === 0) {
-    return <p className="text-center text-gray-500 dark:text-gray-400 py-8">{t('public.noResults')}</p>
+    return <p className="text-center text-slate-400 py-8">{t('public.noResults')}</p>
   }
 
   return (
     <div
-      className="grid gap-1.5"
+      className="grid gap-2"
       style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(3.25rem, 1fr))' }}
     >
       {tickets.map((ticket) => {
@@ -45,20 +45,22 @@ export function TicketGrid({ tickets, highlight, selected, onToggle }: TicketGri
             aria-pressed={isSelected}
             onClick={() => isAvailable && onToggle(ticket.number)}
             aria-label={`${format3(ticket.number)} - ${t(`status.${ticket.status}`)}`}
-            className={`relative rounded-md py-2 text-sm font-mono font-medium text-center transition-colors ${
+            className={`relative min-h-[2.75rem] rounded-lg py-2 text-sm font-mono font-semibold text-center transition-all duration-150 ${
               CELL_STYLES[ticket.status]
             } ${
-              isSelected ? 'ring-2 ring-brand-600 ring-offset-1 dark:ring-offset-gray-900' : ''
+              isSelected
+                ? 'ring-2 ring-switchblue-400 ring-offset-2 ring-offset-ink-950 !border-switchblue-400 !bg-switchblue-500/25 !text-white shadow-[0_0_14px_rgba(0,195,227,0.55)]'
+                : ''
             } ${
               isHighlighted && !isSelected
-                ? 'ring-2 ring-brand-500 ring-offset-1 dark:ring-offset-gray-900'
+                ? 'ring-2 ring-nintendo-400 ring-offset-2 ring-offset-ink-950'
                 : ''
             }`}
           >
             {format3(ticket.number)}
             {ticket.is_winner && (
               <span
-                className="absolute -top-1 -right-1 text-xs"
+                className="absolute -top-1 -right-1 text-xs text-gold-400 drop-shadow"
                 aria-label={t('public.legend.winner')}
                 title={t('public.legend.winner')}
               >

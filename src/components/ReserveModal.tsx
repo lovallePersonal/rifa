@@ -99,25 +99,25 @@ export function ReserveModal({ numbers, onClose, onReserved, onSuccess }: Reserv
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur p-4"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-xl bg-white dark:bg-gray-800 p-5 shadow-xl"
+        className="w-full max-w-md rounded-2xl bg-white dark:bg-ink-850 dark:ring-1 dark:ring-white/10 p-5 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white dark:font-display">
           {t('public.multi.title')}
         </h2>
-        <p className="mt-1 text-sm font-mono text-gray-600 dark:text-gray-300">
+        <p className="mt-1 text-sm font-mono text-gray-600 dark:text-switchblue-200">
           {formattedNumbers}
         </p>
 
         <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="r-name" className="block text-sm text-gray-700 dark:text-gray-300">
+            <label htmlFor="r-name" className="block text-sm text-gray-700 dark:text-slate-300">
               {t('reserve.nameLabel')}
             </label>
             <input
@@ -126,12 +126,12 @@ export function ReserveModal({ numbers, onClose, onReserved, onSuccess }: Reserv
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={t('reserve.namePlaceholder')}
-              className="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="mt-1 w-full rounded-lg border border-gray-300 dark:border-white/15 bg-white dark:bg-ink-800/70 px-3 py-2 text-gray-900 dark:text-white dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:focus:ring-switchblue-400"
             />
           </div>
 
           <div>
-            <label htmlFor="r-phone" className="block text-sm text-gray-700 dark:text-gray-300">
+            <label htmlFor="r-phone" className="block text-sm text-gray-700 dark:text-slate-300">
               {t('reserve.phoneLabel')}
             </label>
             <input
@@ -140,12 +140,12 @@ export function ReserveModal({ numbers, onClose, onReserved, onSuccess }: Reserv
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder={t('reserve.phonePlaceholder')}
-              className="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="mt-1 w-full rounded-lg border border-gray-300 dark:border-white/15 bg-white dark:bg-ink-800/70 px-3 py-2 text-gray-900 dark:text-white dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:focus:ring-switchblue-400"
             />
           </div>
 
           <div>
-            <label htmlFor="r-email" className="block text-sm text-gray-700 dark:text-gray-300">
+            <label htmlFor="r-email" className="block text-sm text-gray-700 dark:text-slate-300">
               {t('reserve.emailLabel')}
             </label>
             <input
@@ -154,7 +154,7 @@ export function ReserveModal({ numbers, onClose, onReserved, onSuccess }: Reserv
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t('reserve.emailPlaceholder')}
-              className="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="mt-1 w-full rounded-lg border border-gray-300 dark:border-white/15 bg-white dark:bg-ink-800/70 px-3 py-2 text-gray-900 dark:text-white dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:focus:ring-switchblue-400"
             />
           </div>
 
@@ -164,14 +164,14 @@ export function ReserveModal({ numbers, onClose, onReserved, onSuccess }: Reserv
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="rounded-lg px-4 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-white/10"
             >
               {t('reserve.cancel')}
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-60"
+              className="rounded-lg bg-brand-600 dark:bg-gradient-to-r dark:from-nintendo-500 dark:to-switchblue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 dark:hover:opacity-90 disabled:opacity-60"
             >
               {t('reserve.submit')}
             </button>

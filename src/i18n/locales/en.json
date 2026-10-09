@@ -9,6 +9,11 @@
     "lotteryLabel": "with the last three digits of the",
     "priceLabel": "Price per number"
   },
+  "hero": {
+    "tagline": "SUPER RAFFLE",
+    "switchAlt": "Nintendo Switch",
+    "airpodsAlt": "AirPods 4"
+  },
   "raffle": {
     "intro": "Pick your lucky number and join in.",
     "numbersRange": "Numbers from {{min}} to {{max}}"

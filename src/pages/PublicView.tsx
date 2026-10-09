@@ -64,18 +64,28 @@ export function PublicView() {
   )
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-      <main className="flex-1 w-full max-w-5xl mx-auto px-4 py-6 space-y-6">
+    <div className="dark relative min-h-screen flex flex-col bg-ink-950 text-slate-100 overflow-hidden">
+      {/* Ambient glow orbs behind the whole page (decorative). */}
+      <div
+        aria-hidden="true"
+        className="glow-blob top-40 -left-24 h-72 w-72 bg-nintendo-600/20"
+      />
+      <div
+        aria-hidden="true"
+        className="glow-blob bottom-24 -right-24 h-80 w-80 bg-switchblue-600/15"
+      />
+
+      <main className="relative z-10 flex-1 w-full max-w-5xl mx-auto px-4 py-6 space-y-6">
         <Banner />
 
         <Counters statuses={statuses} />
 
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <h2 className="font-display text-xl font-bold text-white">
               {t('public.title')}
             </h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-slate-400">
               {t('raffle.numbersRange', { min: RAFFLE.numberMin, max: RAFFLE.numberMax })}
             </p>
           </div>
@@ -84,7 +94,7 @@ export function PublicView() {
 
           <Legend />
 
-          <p className="text-xs text-gray-500 dark:text-gray-400">{t('public.multi.selectHint')}</p>
+          <p className="text-xs text-slate-400">{t('public.multi.selectHint')}</p>
 
           <TicketGrid
             tickets={filtered}
@@ -96,13 +106,13 @@ export function PublicView() {
       </main>
 
       {selectedSet.size > 0 && (
-        <div className="sticky bottom-0 z-40 border-t border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-900/95 backdrop-blur">
+        <div className="sticky bottom-0 z-40 border-t border-white/10 bg-ink-900/90 backdrop-blur">
           <div className="w-full max-w-5xl mx-auto px-4 py-3 space-y-2">
             <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              <p className="text-sm font-semibold text-white">
                 {t('public.multi.selectedCount', { count: selectedSet.size })}
               </p>
-              <p className="text-xs font-mono text-gray-600 dark:text-gray-300">
+              <p className="text-xs font-mono text-switchblue-200">
                 {t('public.multi.selectedList', { numbers: formattedSelected })}
               </p>
             </div>
@@ -110,14 +120,14 @@ export function PublicView() {
               <button
                 type="button"
                 onClick={clearSelection}
-                className="rounded-lg px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="rounded-lg px-4 py-2 text-sm text-slate-300 hover:bg-white/10"
               >
                 {t('public.multi.clear')}
               </button>
               <button
                 type="button"
                 onClick={() => setModalOpen(true)}
-                className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
+                className="rounded-lg bg-gradient-to-r from-nintendo-500 to-switchblue-500 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-nintendo-500/20 hover:opacity-90 transition-opacity"
               >
                 {t('public.multi.buySelected', { count: selectedSet.size })}
               </button>
@@ -143,12 +153,12 @@ export function PublicView() {
 function Legend() {
   const { t } = useTranslation()
   const items: { key: string; dot: string }[] = [
-    { key: 'public.legend.available', dot: 'bg-green-400' },
-    { key: 'public.legend.reserved', dot: 'bg-amber-400' },
-    { key: 'public.legend.paid', dot: 'bg-gray-400' },
+    { key: 'public.legend.available', dot: 'bg-switchblue-400' },
+    { key: 'public.legend.reserved', dot: 'bg-gold-400' },
+    { key: 'public.legend.paid', dot: 'bg-slate-500' },
   ]
   return (
-    <div className="flex flex-wrap gap-4 text-xs text-gray-600 dark:text-gray-300">
+    <div className="flex flex-wrap gap-4 text-xs text-slate-300">
       {items.map((it) => (
         <span key={it.key} className="inline-flex items-center gap-1.5">
           <span className={`h-3 w-3 rounded-full ${it.dot}`} aria-hidden="true" />

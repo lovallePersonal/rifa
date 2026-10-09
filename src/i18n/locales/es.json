@@ -9,6 +9,11 @@
     "lotteryLabel": "con las tres ultimas cifras de la",
     "priceLabel": "Valor por numero"
   },
+  "hero": {
+    "tagline": "SUPER RIFA",
+    "switchAlt": "Nintendo Switch",
+    "airpodsAlt": "AirPods 4"
+  },
   "raffle": {
     "intro": "Elige tu numero de la suerte y participa.",
     "numbersRange": "Numeros del {{min}} al {{max}}"

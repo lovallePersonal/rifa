@@ -39,7 +39,7 @@ export function SearchBox({ onSearch }: SearchBoxProps) {
         value={value}
         onChange={(e) => handleChange(e.target.value)}
         placeholder={t('search.placeholder')}
-        className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-500"
+        className="w-full rounded-lg border border-gray-300 dark:border-white/15 bg-white dark:bg-ink-800/70 px-3 py-2 text-gray-900 dark:text-white dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:focus:ring-switchblue-400"
       />
     </div>
   )

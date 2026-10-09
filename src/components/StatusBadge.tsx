@@ -7,9 +7,9 @@ import type { Status } from '../types'
  * The text label is always rendered (never color-only) via i18n.
  */
 const STYLES: Record<Status, string> = {
-  available: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  reserved: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
-  paid: 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100',
+  available: 'bg-green-100 text-green-800 dark:bg-switchblue-500/20 dark:text-switchblue-200',
+  reserved: 'bg-amber-100 text-amber-800 dark:bg-gold-500/20 dark:text-gold-200',
+  paid: 'bg-gray-200 text-gray-800 dark:bg-white/10 dark:text-slate-200',
 }
 
 export function StatusBadge({ status }: { status: Status }) {
