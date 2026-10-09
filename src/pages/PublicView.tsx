@@ -146,7 +146,7 @@ export function PublicView() {
 
       <Footer />
 
-      {modalOpen && selectedNumbers.length > 0 && (
+      {modalOpen && (
         <ReserveModal
           numbers={selectedNumbers}
           onClose={() => setModalOpen(false)}

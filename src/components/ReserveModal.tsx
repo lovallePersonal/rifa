@@ -31,7 +31,9 @@ export function ReserveModal({ numbers, onClose, onReserved, onSuccess }: Reserv
   const [reserved, setReserved] = useState(false)
   const [waUrl, setWaUrl] = useState('')
 
-  const sorted = [...numbers].sort((a, b) => a - b)
+  // Snapshot the numbers on first mount so the modal keeps showing them even
+  // after the parent clears the live selection on a successful reservation.
+  const [sorted] = useState(() => [...numbers].sort((a, b) => a - b))
   const formattedNumbers = sorted.map(format3).join(', ')
 
   function validate(): boolean {
