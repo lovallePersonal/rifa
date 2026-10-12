@@ -5,7 +5,6 @@ import { supabase } from '../lib/supabase'
 import type { PublicTicket } from '../types'
 import { RAFFLE, format3, resolveSeller } from '../config'
 import Banner from '../components/Banner'
-import Counters from '../components/Counters'
 import SearchBox from '../components/SearchBox'
 import TicketGrid from '../components/TicketGrid'
 import ReserveModal from '../components/ReserveModal'
@@ -44,8 +43,6 @@ export function PublicView() {
     if (highlight === null) return tickets
     return tickets.filter((ti) => ti.number === highlight)
   }, [tickets, highlight])
-
-  const statuses = useMemo(() => tickets.map((ti) => ti.status), [tickets])
 
   const toggle = useCallback((n: number) => {
     setSelectedSet((prev) => {
@@ -86,8 +83,6 @@ export function PublicView() {
         }`}
       >
         <Banner />
-
-        <Counters statuses={statuses} />
 
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
