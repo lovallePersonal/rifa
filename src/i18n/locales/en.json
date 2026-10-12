@@ -22,6 +22,7 @@
     "title": "Available numbers",
     "legend": {
       "available": "Available",
+      "taken": "Taken",
       "reserved": "Reserved",
       "paid": "Paid",
       "winner": "Winner"

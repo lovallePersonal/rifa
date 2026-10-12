@@ -22,6 +22,7 @@
     "title": "Numeros disponibles",
     "legend": {
       "available": "Disponible",
+      "taken": "No disponible",
       "reserved": "Reservado",
       "paid": "Pagado",
       "winner": "Ganador"

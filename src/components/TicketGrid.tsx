@@ -12,13 +12,19 @@ interface TicketGridProps {
   onToggle: (n: number) => void
 }
 
-/** Tailwind classes per status; available is interactive, others are not. */
+/**
+ * Tailwind classes per status. Public-facing: only two visible states —
+ * available (interactive) and taken. "reserved" and "paid" look IDENTICAL so
+ * the public can never tell whether a taken number is merely reserved or paid.
+ */
+const TAKEN_STYLE =
+  'bg-white/5 text-slate-500 border border-white/10 cursor-not-allowed opacity-70'
+
 const CELL_STYLES: Record<PublicTicket['status'], string> = {
   available:
     'bg-ink-800 text-white border border-switchblue-500/40 hover:border-switchblue-400 hover:bg-ink-700 hover:text-white cursor-pointer',
-  reserved:
-    'bg-gold-500/15 text-gold-200 border border-gold-500/30 cursor-not-allowed opacity-80',
-  paid: 'bg-white/5 text-slate-500 border border-white/10 cursor-not-allowed opacity-70',
+  reserved: TAKEN_STYLE,
+  paid: TAKEN_STYLE,
 }
 
 export function TicketGrid({ tickets, highlight, selected, onToggle }: TicketGridProps) {
@@ -49,7 +55,9 @@ export function TicketGrid({ tickets, highlight, selected, onToggle }: TicketGri
             disabled={!isAvailable}
             aria-pressed={isSelected}
             onClick={() => isAvailable && onToggle(ticket.number)}
-            aria-label={`${format3(ticket.number)} - ${t(`status.${ticket.status}`)}`}
+            aria-label={`${format3(ticket.number)} - ${
+              isAvailable ? t('public.legend.available') : t('public.legend.taken')
+            }`}
             className={`relative min-h-[2.75rem] rounded-lg py-2 text-sm font-mono font-semibold text-center transition-all duration-150 ${
               CELL_STYLES[ticket.status]
             } ${

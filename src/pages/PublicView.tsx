@@ -163,8 +163,7 @@ function Legend() {
   const { t } = useTranslation()
   const items: { key: string; dot: string }[] = [
     { key: 'public.legend.available', dot: 'bg-switchblue-400' },
-    { key: 'public.legend.reserved', dot: 'bg-gold-400' },
-    { key: 'public.legend.paid', dot: 'bg-slate-500' },
+    { key: 'public.legend.taken', dot: 'bg-slate-500' },
   ]
   return (
     <div className="flex flex-wrap gap-4 text-xs text-slate-300">
