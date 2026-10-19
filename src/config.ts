@@ -69,11 +69,11 @@ export function resolveSeller(key: string | null | undefined): ResolvedSeller {
  */
 export const RAFFLE = {
   ticketPriceCOP: 10000, // price per number in Colombian pesos (COP)
-  drawDate: '2026-10-29', // date the raffle is played (ISO yyyy-mm-dd)
+  drawDate: '2026-12-05', // date the raffle is played (ISO yyyy-mm-dd) — movida a sabado 5 de diciembre
   prize: 'Nintendo Switch + AirPods 4', // the prize on offer
   numberMin: 1, // first number available (inclusive)
   numberMax: 999, // last number available (inclusive)
-  lotteryName: 'Loteria de Bogota', // lottery whose last 3 digits decide the winner
+  lotteryName: 'Loteria de Boyaca', // lottery whose last 3 digits decide the winner (sorteo del sabado 10:40 PM)
 } as const
 
 /**
