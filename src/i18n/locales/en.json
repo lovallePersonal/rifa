@@ -15,7 +15,7 @@
     "airpodsAlt": "AirPods 4"
   },
   "raffle": {
-    "intro": "Pick your lucky number and join in.",
+    "intro": "Pick your lucky number and join in. The winner can keep the Nintendo Switch plus the AirPods 4, or take $2,000,000 COP in cash. Whichever they prefer.",
     "numbersRange": "Numbers from {{min}} to {{max}}"
   },
   "public": {

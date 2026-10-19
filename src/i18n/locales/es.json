@@ -15,7 +15,7 @@
     "airpodsAlt": "AirPods 4"
   },
   "raffle": {
-    "intro": "Elige tu numero de la suerte y participa.",
+    "intro": "Elige tu numero de la suerte y participa. El ganador puede quedarse con la Nintendo Switch mas los AirPods 4, o recibir $2.000.000 en efectivo. Lo que prefiera.",
     "numbersRange": "Numeros del {{min}} al {{max}}"
   },
   "public": {
