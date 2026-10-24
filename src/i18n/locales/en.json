@@ -108,6 +108,11 @@
       "seller": "Seller",
       "all": "All"
     },
+    "search": {
+      "placeholder": "Search by number, name, phone or email",
+      "clear": "Clear",
+      "resultsCount": "{{count}} results"
+    },
     "perSellerTotal": "Total per seller",
     "markPaid": "Mark paid",
     "release": "Release",

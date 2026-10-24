@@ -38,14 +38,30 @@ export function AdminTable({
   const { t } = useTranslation()
   const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all')
   const [sellerFilter, setSellerFilter] = useState<SoldBy | 'all'>('all')
+  const [search, setSearch] = useState('')
 
   const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase()
     return tickets.filter((ti) => {
       if (statusFilter !== 'all' && ti.status !== statusFilter) return false
       if (sellerFilter !== 'all' && ti.sold_by !== sellerFilter) return false
+      if (q) {
+        // Text search matches ANY of: number (plain or 3-digit padded),
+        // buyer name, phone or email. All case-insensitive / substring.
+        const haystack = [
+          String(ti.number),
+          format3(ti.number),
+          ti.buyer_name ?? '',
+          ti.buyer_phone ?? '',
+          ti.buyer_email ?? '',
+        ]
+          .join(' ')
+          .toLowerCase()
+        if (!haystack.includes(q)) return false
+      }
       return true
     })
-  }, [tickets, statusFilter, sellerFilter])
+  }, [tickets, statusFilter, sellerFilter, search])
 
   const perSeller = useMemo(() => {
     return SELLERS.map((seller) => {
@@ -74,6 +90,34 @@ export function AdminTable({
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Search */}
+      <div className="flex flex-col gap-1">
+        <div className="relative w-full sm:max-w-md">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t('admin.search.placeholder')}
+            aria-label={t('admin.search.placeholder')}
+            className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 pr-20 text-sm text-gray-900 dark:text-gray-100 focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600"
+          />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded bg-gray-200 dark:bg-gray-700 px-2 py-1 text-xs font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
+            >
+              {t('admin.search.clear')}
+            </button>
+          )}
+        </div>
+        {search.trim() && (
+          <span className="text-xs text-gray-500 dark:text-gray-400" aria-live="polite">
+            {t('admin.search.resultsCount', { count: filtered.length })}
+          </span>
+        )}
       </div>
 
       {/* Filters */}

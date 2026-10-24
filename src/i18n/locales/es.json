@@ -108,6 +108,11 @@
       "seller": "Vendedor",
       "all": "Todos"
     },
+    "search": {
+      "placeholder": "Buscar por numero, nombre, telefono o correo",
+      "clear": "Limpiar",
+      "resultsCount": "{{count}} resultados"
+    },
     "perSellerTotal": "Total por vendedor",
     "markPaid": "Marcar pagado",
     "release": "Liberar",
